@@ -31,89 +31,56 @@ public class BoardDao {
 		return list;
 	}
 	
-	public int addBoardList(Board board) throws Exception {
-		int row = 0;
-		Connection conn=null;
-		PreparedStatement stmt = null;
-
-		String sql = "INSERT INTO board(title, content) VALUES(?, ?)";
+	public Board selectBoardOne (Connection conn, int no) throws Exception {
+		Board board = null;
 		
-		try {
-			DBUtil dbUtil = new DBUtil();
-			conn = dbUtil.getConnection();
-			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, board.getTitle());
-			stmt.setString(2, board.getContent());
-			
-			row = stmt.executeUpdate();
-		} finally {			
-			conn.close();
-			stmt.close();
-		}		
-		return row;
-	}
-	public ArrayList<Board> selectBoardListForModify(int no) throws Exception {
-		Connection conn=null;
-		PreparedStatement stmt = null;
-
-		String sql = "SELECT no, title, content FROM board WHERE no = ?";
-		
-		DBUtil dbUtil = new DBUtil();
-		conn = dbUtil.getConnection();
-		stmt = conn.prepareStatement(sql);
+		String sql = "SELECT no, title, content FROM board where no = ?";
+		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, no);
-		ResultSet rs = stmt.executeQuery();
-		// ResultSet -> List 가공작업
-		ArrayList<Board> list = new ArrayList<Board>();
-		while(rs.next()) {
-			Board b = new Board();
-			b.setNo(rs.getInt("no"));
-			b.setTitle(rs.getString("title"));
-			b.setTitle(rs.getString("content"));
-			list.add(b);
-		}
-		return list;
-	}
-	public int modifyBoardList(Board board) throws Exception {
-		int row = 0;
-		Connection conn=null;
-		PreparedStatement stmt = null;
-
-		String sql = "INSERT INTO board(title, content) VALUES(?, ?)";
 		
-		try {
-			DBUtil dbUtil = new DBUtil();
-			conn = dbUtil.getConnection();
-			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, board.getTitle());
-			stmt.setString(2, board.getContent());
-			
-			row = stmt.executeUpdate();
-		} finally {			
-			conn.close();
-			stmt.close();
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next()) {
+			board = new Board();
+			board.setNo(rs.getInt("no"));
+			board.setTitle(rs.getString("title"));
+			board.setContent(rs.getString("content"));
 		}		
+		return board;
+	}
+	
+	public int addBoardList(Connection conn, Board board) throws Exception {
+		int row = 0;
+
+		String sql = "INSERT INTO board(title, content) VALUES(?, ?)";		
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, board.getTitle());
+		stmt.setString(2, board.getContent());
+		
+		row = stmt.executeUpdate();
 		return row;
 	}
-	public int removeBoardList(Board board) throws Exception {
+	
+	public int modifyBoardList(Connection conn, Board board) throws Exception {
 		int row = 0;
-		Connection conn=null;
-		PreparedStatement stmt = null;
 
-		String sql = "INSERT INTO board(title, content) VALUES(?, ?)";
-		
-		try {
-			DBUtil dbUtil = new DBUtil();
-			conn = dbUtil.getConnection();
-			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, board.getTitle());
-			stmt.setString(2, board.getContent());
+		String sql = "UPDATE board SET title = ?, content = ? WHERE no = ?";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, board.getTitle());
+		stmt.setString(2, board.getContent());
+		stmt.setInt(3, board.getNo());
 			
-			row = stmt.executeUpdate();
-		} finally {			
-			conn.close();
-			stmt.close();
-		}		
+		row = stmt.executeUpdate();
+		return row;
+	}
+	public int removeBoardList(Connection conn, Board board) throws Exception {
+		int row = 0;
+
+		String sql = "DELETE FROM board WHERE no = ?";
+		
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, board.getNo());
+			
+		row = stmt.executeUpdate();		
 		return row;
 	}
 	

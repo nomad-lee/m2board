@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,20 +11,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import service.BoardService;
 import vo.Board;
-// Model(일반 클래스) - Controller(Servlet클래스 상속) - View(JSP)
-@WebServlet("/BoardListController")
-public class BoardListController extends HttpServlet {
+
+@WebServlet("ModifyBoardFormController")
+public class ModifyBoardFormController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int no = 0;
+		no = Integer.parseInt(request.getParameter("no"));
+		
+	    Board board = new Board();
 		BoardService boardService = new BoardService();
-		ArrayList<Board> list = boardService.getBoardList();
-         
+		board = boardService.getBoardOne(no);
+
 		// view와 공유할 모델데이터 설정
-		request.setAttribute("list", list);
-      
-		// view 연결
-		// RequestDispatcher 1) include 2) forward
-		RequestDispatcher rd 
-			= request.getRequestDispatcher("/WEB-INF/view/mvcBoardList.jsp");
+		request.setAttribute("board", board);
+		
+		// view 있으면
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/mvcModifyBoardForm.jsp");		
 		rd.forward(request, response);
 	}
 }

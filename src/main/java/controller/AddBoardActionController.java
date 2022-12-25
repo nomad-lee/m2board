@@ -16,7 +16,7 @@ import vo.Board;
 // list select					: C -> M -> V 
 // form	페이지호출					: C -> V
 // action insert/update/delete	: C -> M =====> response.sendRedirect()
-@WebServlet("/mvc/AddBoardActionController")
+@WebServlet("/AddBoardActionController")
 public class AddBoardActionController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,12 +29,13 @@ public class AddBoardActionController extends HttpServlet {
 		Board board = new Board();
 		board.setTitle(title);
 		board.setContent(content);
+		
 		// 모델호출
 		BoardService boardService = new BoardService();
-		boardService.addBoard(board); // 서버스는 dao호출 dao.insertBoard(conn, board)
+		boardService.addBoardService(board); // 서버스는 dao호출 dao.insertBoard(conn, board)
 		
-		// 뷰가 없다
-		response.sendRedirect(request.getContextPath()+"/mvc/BoardListController");
+		// view가 없으므로
+		response.sendRedirect(request.getContextPath()+"/BoardListController");
 	}
 
 }
